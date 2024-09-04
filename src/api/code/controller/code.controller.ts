@@ -38,15 +38,6 @@ export class CodeController {
 	@ApiResponse({ status: 500, description: 'Error creating code.' })
 	async create(@Body() createStatusCode: CreateStatusCodeDto, @Res() res) {
 		try {
-			const findCode = await this.CodeService.findOne(
-				createStatusCode?.language,
-				createStatusCode?.id
-			);
-			if (findCode) {
-				return res.status(400).send({
-					message: 'The code is already created',
-				});
-			}
 			const data = await this.CodeService.createOrUpdate(createStatusCode);
 			return res.status(201).send({ data });
 		} catch (error) {
@@ -69,7 +60,7 @@ export class CodeController {
 		name: 'search',
 		required: false,
 		description: 'Optional search query',
-	}) // Añadir esto
+	})
 	async findAll(
 		@Param('lang') lang: string,
 		@Res() res,
@@ -90,7 +81,12 @@ export class CodeController {
 
 	@Get(':lang/:codeId')
 	@ApiOperation({ summary: 'Retrieve a single code by ID and Lang' })
-	@ApiParam({ name: 'lang', description: 'lang of the code', type: String })
+	@ApiParam({
+		name: 'lang',
+		description: 'lang of the code',
+		type: String,
+		required: false,
+	})
 	@ApiParam({ name: 'codeId', description: 'ID of the code', type: String })
 	@ApiResponse({ status: 200, description: 'Code found.' })
 	@ApiResponse({ status: 404, description: 'Code not found.' })

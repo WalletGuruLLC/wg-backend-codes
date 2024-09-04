@@ -19,6 +19,7 @@ export class CodeService {
 		});
 	}
 	async createOrUpdate(createStatusCode: CreateStatusCodeDto) {
+		const docClient = new DocumentClient();
 		const { id, description, language, text } = createStatusCode;
 
 		const newTranslation = {
@@ -26,11 +27,16 @@ export class CodeService {
 			text,
 		};
 
-		const existingCode = await this.dbInstance.get({ Id: id });
+		const paramsGet: DocumentClient.GetItemInput = {
+			TableName: 'StatusCode',
+			Key: { Id: id },
+		};
+
+		const existingCodeData = await docClient.get(paramsGet).promise();
+		const existingCode = existingCodeData.Item;
 
 		if (existingCode) {
 			existingCode.Description = description;
-
 			existingCode.StatusCodeTranslations =
 				existingCode.StatusCodeTranslations || [];
 
@@ -45,7 +51,20 @@ export class CodeService {
 				existingCode.StatusCodeTranslations.push(newTranslation);
 			}
 
-			return this.dbInstance.update({ Id: id }, existingCode);
+			const paramsUpdate: DocumentClient.UpdateItemInput = {
+				TableName: 'StatusCode',
+				Key: { Id: id },
+				UpdateExpression:
+					'set Description = :description, StatusCodeTranslations = :translations',
+				ExpressionAttributeValues: {
+					':description': existingCode.Description,
+					':translations': existingCode.StatusCodeTranslations,
+				},
+				ReturnValues: 'ALL_NEW',
+			};
+
+			const updatedCode = await docClient.update(paramsUpdate).promise();
+			return updatedCode.Attributes;
 		} else {
 			const code = {
 				Id: id,
@@ -53,9 +72,16 @@ export class CodeService {
 				StatusCodeTranslations: [newTranslation],
 			};
 
-			return this.dbInstance.create(code);
+			const paramsPut: DocumentClient.PutItemInput = {
+				TableName: 'StatusCode',
+				Item: code,
+			};
+
+			await docClient.put(paramsPut).promise();
+			return code;
 		}
 	}
+
 	async findAll(
 		lang: string,
 		search?: string
