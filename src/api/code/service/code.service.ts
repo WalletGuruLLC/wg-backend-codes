@@ -144,7 +144,6 @@ export class CodeService {
 		let filteredTranslation = codesFilterId;
 
 		if (lang !== '' && lang !== '{lang}') {
-			console.log('entro', lang);
 			filteredTranslation = codesFilterId
 				.flatMap(
 					code =>
