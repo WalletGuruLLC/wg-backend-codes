@@ -1,8 +1,7 @@
 # Custom codes Microservice
 
 This microservice is responsible for user custom codes using Node.js and NestJS as the development framework, DynamoDB
-as the NoSQL database, and Dynamoose as the ORM for interaction with DynamoDB. It provides functionalities such as user
-registration, login, roles, etc.
+as the NoSQL database, and Dynamoose as the ORM for interaction with DynamoDB.
 
 ## Requirements
 
