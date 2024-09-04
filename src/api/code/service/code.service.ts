@@ -96,17 +96,25 @@ export class CodeService {
 
 		let translations = codes.flatMap(
 			code =>
-				code.statusCodeTranslations?.filter(
-					translation => translation.language === lang
-				) || []
+				code.statusCodeTranslations
+					?.filter(translation => translation.language === lang)
+					.map(translation => ({
+						id: code.id,
+						description: code.description,
+						...translation,
+					})) || []
 		);
 
 		if (translations.length === 0) {
 			translations = codes.flatMap(
 				code =>
-					code.statusCodeTranslations?.filter(
-						translation => translation.language === 'EN'
-					) || []
+					code.statusCodeTranslations
+						?.filter(translation => translation.language === 'EN')
+						.map(translation => ({
+							id: code.id,
+							description: code.description,
+							...translation,
+						})) || []
 			);
 		}
 
@@ -133,21 +141,19 @@ export class CodeService {
 
 		const codesFilterId = codes.filter(code => code.id === codeId);
 
-		let filteredTranslation = codesFilterId
-			.flatMap(
-				code =>
-					code.statusCodeTranslations?.filter(
-						translation => translation.language === lang
-					) || []
-			)
-			.find(translation => translation);
+		let filteredTranslation = codesFilterId;
 
-		if (!filteredTranslation) {
+		if (lang !== '' && lang !== '{lang}') {
 			filteredTranslation = codesFilterId
-				.flatMap(code => code.statusCodeTranslations || [])
+				.flatMap(
+					code =>
+						code.statusCodeTranslations?.filter(
+							translation => translation.language === lang
+						) || []
+				)
 				.find(translation => translation);
 		}
 
-		return convertToCamelCase(filteredTranslation || {});
+		return convertToCamelCase(filteredTranslation?.[0] || {});
 	}
 }
