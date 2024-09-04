@@ -75,7 +75,6 @@ export class CodeController {
 				data: codes,
 			});
 		} catch (error) {
-			console.log(error);
 			return res.status(HttpStatus.BAD_REQUEST).send({
 				message: 'Error listing the codes',
 			});
