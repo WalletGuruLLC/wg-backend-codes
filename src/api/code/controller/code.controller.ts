@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { CodeService } from '../service/code.service';
 import {
+	ApiExcludeEndpoint,
 	ApiForbiddenResponse,
 	ApiOkResponse,
 	ApiOperation,
@@ -36,6 +37,7 @@ export class CodeController {
 		description: 'Status code created successfully.',
 	})
 	@ApiResponse({ status: 500, description: 'Error creating code.' })
+	@ApiExcludeEndpoint()
 	async create(@Body() createStatusCode: CreateStatusCodeDto, @Res() res) {
 		try {
 			const data = await this.CodeService.createOrUpdate(createStatusCode);
@@ -73,6 +75,7 @@ export class CodeController {
 				data: codes,
 			});
 		} catch (error) {
+			console.log(error);
 			return res.status(HttpStatus.BAD_REQUEST).send({
 				message: 'Error listing the codes',
 			});
