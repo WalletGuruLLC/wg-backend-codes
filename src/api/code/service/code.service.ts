@@ -46,7 +46,6 @@ export class CodeService {
 
 			if (existingTranslation) {
 				existingTranslation.text = text;
-				existingTranslation.description = description;
 			} else {
 				existingCode.StatusCodeTranslations.push(newTranslation);
 			}
@@ -132,28 +131,25 @@ export class CodeService {
 
 	async findOne(lang: string, codeId: string) {
 		const docClient = new DocumentClient();
-		const params: DocumentClient.ScanInput = {
+		const params: DocumentClient.QueryInput = {
 			TableName: 'StatusCode',
+			KeyConditionExpression: 'Id = :codeId',
+			ExpressionAttributeValues: {
+				':codeId': codeId,
+			},
 		};
 
-		const result = await docClient.scan(params).promise();
+		const result = await docClient.query(params).promise();
 		const codes = convertToCamelCase(result.Items || []);
 
-		const codesFilterId = codes.filter(code => code.id === codeId);
+		const code = codes.find(code => code.id === codeId);
 
-		let filteredTranslation = codesFilterId;
-
-		if (lang !== '' && lang !== '{lang}') {
-			filteredTranslation = codesFilterId
-				.flatMap(
-					code =>
-						code.statusCodeTranslations?.filter(
-							translation => translation.language === lang
-						) || []
-				)
-				.find(translation => translation);
+		if (code && lang && lang !== '{lang}') {
+			code.statusCodeTranslations = code.statusCodeTranslations?.filter(
+				translation => translation.language === lang
+			);
 		}
 
-		return convertToCamelCase(filteredTranslation?.[0] || {});
+		return code || {};
 	}
 }
