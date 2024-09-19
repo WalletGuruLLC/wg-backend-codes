@@ -98,13 +98,13 @@ export class CodeController {
 		@Res() res
 	) {
 		try {
-			const code = await this.CodeService.findOne(lang, codeId);
-			if (!code) {
+			const data = await this.CodeService.findOne(lang, codeId);
+			if (!data) {
 				return res.status(400).send({
 					message: 'Code not found',
 				});
 			}
-			return res.status(HttpStatus.OK).send({ code });
+			return res.status(HttpStatus.OK).send({ data });
 		} catch (error) {
 			return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

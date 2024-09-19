@@ -150,12 +150,27 @@ export class CodeService {
 
 		const code = codes.find(code => code.id === codeId);
 
-		if (code && lang && lang !== '{lang}') {
-			code.statusCodeTranslations = code.statusCodeTranslations?.filter(
+		if (!code) {
+			return { data: { translations: [] } }; // Si no se encuentra el código, se devuelve un arreglo vacío
+		}
+
+		let translations = code.statusCodeTranslations || [];
+
+		if (lang && lang !== '{lang}') {
+			translations = translations.filter(
 				translation => translation.language === lang
 			);
 		}
 
-		return code || {};
+		const response = {
+			translations: translations.map(translation => ({
+				id: code.id,
+				description: code.description,
+				language: translation.language,
+				text: translation.text,
+			})),
+		};
+
+		return response;
 	}
 }
