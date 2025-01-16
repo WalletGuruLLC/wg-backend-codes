@@ -5,6 +5,7 @@ import { AllExceptionsFilter } from './api/all-exceptions.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as Sentry from '@sentry/nestjs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
+import redocExpressMiddleware from 'redoc-express';
 
 async function bootstrap() {
 	if (process.env.SENTRY_DSN) {
@@ -43,6 +44,14 @@ async function bootstrap() {
 		origin: '*',
 		credentials: true,
 	});
+
+	const redocOptions = {
+		title: 'Wallet Guru API Documentation',
+		version: '1.0',
+		specUrl: '/docs-json',
+	};
+
+	app.use('/redocs', redocExpressMiddleware(redocOptions));
 
 	await app.listen(3000);
 }
