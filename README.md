@@ -10,31 +10,66 @@ as the NoSQL database, and Dynamoose as the ORM for interaction with DynamoDB.
 - AWS DynamoDB
 - Dynamoose (v2 or higher)
 - AWS SDK for Node.js
+- [Wg-infra](https://github.com/ErgonStreamGH/wg-infra) - Deploy services with Terraform
 
-## Installation
 
-    npm install
+## Install
 
-## Configuration
+### 1. Clone the Repository
 
-### Set up the environment variables
+```sh
+git clone https://github.com/WalletGuruLLC/wg-backend-codes.git
+cd wg-backend-codes
+```
 
-Create a .env file in the root of the project following the content of .env.example.
+### 2. Install Dependencies
 
-## Running the Application
+```sh
+npm install
+```
 
-    npm run start:dev
+### 3. Set Up Environment Variables
 
-## Envs for pipeline
+Create a `.env` file in the root directory and add:
 
-- `NODE_ENV`: Environment of the application (development, qa, staging, production) 
-- `AWS_KEY_ID`: Key ID of the AWS account
-- `AWS_SECRET_ACCESS_KEY`: Secret key of the AWS account
-- `AWS_REGION`: Region of the AWS account
-- `SENTRY_DSN`: DSN of the Sentry project
-- `AWS_KEY`: Key of the AWS account for deploy image of docker in ECR
-- `AWS_SECRET`: Secret of the AWS account for deploy image of docker in ECR
-- `IMAGE`: Name of the image for deploy in ECR
-- `CLUSTER_NAME`: Name of the cluster in ECS
-- `AWS_ACCESS_KEY_ID_TERRAFORM`: Key ID of the AWS account for Terraform
-- `AWS_SECRET_ACCESS_KEY_TERRAFORM`: Secret key of the AWS account for Terraform
+```ini
+AWS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=
+```
+
+---
+
+### 4. Run the Application
+
+Using **Docker Compose**:
+
+```sh
+docker-compose up
+```
+
+
+## Infrastructure Setup with `wg-infra`
+
+The **wg-infra** repository is responsible for provisioning multiple AWS resources required by this project, including *
+*ECR repositories, databases, IAM roles, networking, and other cloud infrastructure**.
+
+## Ensure Consistency Across Microservices
+
+Make sure you follow similar steps when setting up, deploying, and managing the following microservices hosted in the
+respective repositories:
+
+| **Microservice**                                | **Repository URL**                                               |
+|-------------------------------------------------|------------------------------------------------------------------|
+| Authentication Service (`backend-auth`)         | [GitHub Repo](https://github.com/WalletGuruLLC/backend-auth)     |
+| Notification Service (`backend-notification`)   | [GitHub Repo](https://github.com/your-org/backend-notification)  |
+| Admin Frontend (`frontend-admin`)               | [GitHub Repo](https://github.com/WalletGuruLLC/frontend-admin)   |
+| Wallet Service (`backend-wallet`)               | [GitHub Repo](https://github.com/WalletGuruLLC/backend-wallet)   |
+| Countries Now Service (`backend-countries-now`) | [GitHub Repo](https://github.com/ErgonStreamGH/wg-countries-now) |
+| Codes Service (`backend-codes`)                 | [GitHub Repo](https://github.com/ErgonStreamGH/wg-backend-codes) |
+
+Each microservice should:
+
+1️⃣ Deploy the dependencies using Terraform in the **wg-infra** repository
+2️⃣ Store environment variables securely in **AWS Secrets Manager**
+3️⃣ Use **Docker Compose** for local development
