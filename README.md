@@ -10,7 +10,6 @@ as the NoSQL database, and Dynamoose as the ORM for interaction with DynamoDB.
 - AWS DynamoDB
 - Dynamoose (v2 or higher)
 - AWS SDK for Node.js
-- [Create resources of aws](https://github.com/ErgonStreamGH/wg-infra) `Wg infra`
 
 ## Installation
 
